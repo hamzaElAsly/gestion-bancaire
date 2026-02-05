@@ -20,12 +20,13 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
 	//Auth / Validation
     Optional<Client> findByEmail(String email);
     Boolean existsByEmail(String email);
+    
      @Query("""
     	    select new ctrl.banque.dto.ClientViewDTO( c.id, c.nom, c.prenom, c.email, size(c.comptes), c.statut)
-    	    from Client c where (:kw = '' or
-				    	         lower(c.nom) like lower(concat('%', :kw, '%')) or
-				    	         lower(c.prenom) like lower(concat('%', :kw, '%')) or
-				    	         lower(c.email) like lower(concat('%', :kw, '%')))
+    	    from Client c where(:kw = '' or
+				    	        lower(c.nom) like lower(concat('%', :kw, '%')) or
+				    	        lower(c.prenom) like lower(concat('%', :kw, '%')) or
+				    	        lower(c.email) like lower(concat('%', :kw, '%')))
     		"""
     )
     Page<ClientViewDTO> searchAll(@Param("kw") String keyword, Pageable pageable);
@@ -38,20 +39,6 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
 
     //Filtre par statut
     long countByStatut(Client.StatutClient statut);
-    Page<Client> findByStatut(Client.StatutClient statut, Pageable pageable);
-    
-    Page<Client> findByStatutAndNomContainingIgnoreCaseOrPrenomContainingIgnoreCase(
-            Client.StatutClient statut,
-            String nom,
-            String prenom,
-            Pageable pageable
-    );
-    //Recherche 3adi
-    Page<Client> findByNomContainingIgnoreCaseOrPrenomContainingIgnoreCase(
-            String nom,
-            String prenom,
-            Pageable pageable
-    );
 
     //Recherche + statut + pagination
     @Query("""

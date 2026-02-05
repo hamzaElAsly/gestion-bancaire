@@ -81,7 +81,7 @@ public class CompteController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", clientsPage.getTotalPages());
         model.addAttribute("keyword", keyword);
-        model.addAttribute("statut", statut); // باش تبقى القيمة فـ UI
+        model.addAttribute("statut", statut);
 
         long totalClients = clientRepository.count();
         Double totalSolde = compteRepository.sumTotalSolde();
@@ -96,6 +96,10 @@ public class CompteController {
         return "clients/clients";
     }
 
+    @GetMapping("/transaction")
+    public String transactions(Model model) {
+    	return "transaction/transactions";
+    }
     
     // Ajouter client
     @PostMapping
@@ -109,6 +113,7 @@ public class CompteController {
     public Client getClient(@PathVariable Long id) {
         return clientService.getById(id);
     }
+    
     // Modification
     @GetMapping("/clients/{id}") @ResponseBody
     public ClientEditDTO getClientById(@PathVariable Long id) {

@@ -37,15 +37,20 @@ public class ClientService {
     
     public Page<ClientViewDTO> getClientsWithStatus(String keyword, Client.StatutClient statut, Pageable pageable) 
     {
+    	String kw = (keyword == null) ? "" : keyword.trim();
         Page<Client> pageClients;
-        if (keyword == null || keyword.isBlank()) {pageClients = clientRepository.findByStatut(statut, pageable);
+
+        if (kw.isBlank()) {
+        	pageClients = clientRepository.searchByStatutAndKeyword(statut, "", pageable);
         } 
-        else {pageClients = clientRepository
-                .findByStatutAndNomContainingIgnoreCaseOrPrenomContainingIgnoreCase(statut, keyword, keyword, pageable);
+        else {
+        	pageClients = clientRepository.searchByStatutAndKeyword(statut, keyword, pageable);
         }
+
         return pageClients.map(client -> {
-            int nbComptes = client.getComptes() == null ? 0 : client.getComptes().size();
-            String statutClient = nbComptes > 0 ? "ACTIF" : "INACTIF";
+            int nbComptes = (client.getComptes() == null) ? 0 : client.getComptes().size();
+            //String statutClient = nbComptes > 0 ? "ACTIF" : "INACTIF";
+            String statutClient = (client.getStatut()== null) ? null : client.getStatut().name();
 
             return new ClientViewDTO(
                 client.getId(),               
@@ -85,7 +90,5 @@ public class ClientService {
                 comptesDTO
         );
     }
-
-
 }
 
