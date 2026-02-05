@@ -33,7 +33,9 @@ public class CompteController {
         this.compteRepository = compteRepository;
         this.transactionRepository1 = transactionRepository;
     }
-	
+
+    // ================================= Accueil =================================
+    // ===========================================================================
     @GetMapping("/")
     public String accueil(Model model) {
     	long totalClients = clientRepository.count();
@@ -52,7 +54,9 @@ public class CompteController {
         
         return "index";
     }
-    
+
+    // ================================= Client =================================
+    // ==========================================================================
     @GetMapping("/clients")
     public String clients(Model model,
                           @RequestParam(defaultValue = "0") int page,
@@ -62,13 +66,11 @@ public class CompteController {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("nom").ascending());
 
         Client.StatutClient statutEnum = null;
-
         if (statut != null) {
             String v = statut.trim(); 
             if (!v.isEmpty()) {
-                try { statutEnum = Client.StatutClient.valueOf(v.toUpperCase());
-                } catch (IllegalArgumentException ex) { statutEnum = null;
-                }
+                try { statutEnum = Client.StatutClient.valueOf(v.toUpperCase()); } 
+                catch (IllegalArgumentException ex) { statutEnum = null; }
             }
         }
 
@@ -95,12 +97,6 @@ public class CompteController {
 
         return "clients/clients";
     }
-
-    @GetMapping("/transaction")
-    public String transactions(Model model) {
-    	return "transaction/transactions";
-    }
-    
     // Ajouter client
     @PostMapping
     public Client addClient(@RequestBody Client client) {
@@ -109,9 +105,9 @@ public class CompteController {
     }
 
     // Détails client
-    @GetMapping("/{id}")
-    public Client getClient(@PathVariable Long id) {
-        return clientService.getById(id);
+    @GetMapping("/clients/details/{id}") @ResponseBody
+    public ClientDetailsDTO clientDetails(@PathVariable Long id) {
+        return clientService.getClientDetails(id);
     }
     
     // Modification
@@ -139,13 +135,18 @@ public class CompteController {
         return "OK";
     }
     
-    @GetMapping("/clients/details/{id}") @ResponseBody
-    public ClientDetailsDTO clientDetails(@PathVariable Long id) {
-        return clientService.getClientDetails(id);
+    // ================================= Transaction =================================
+    // ===============================================================================
+    @GetMapping("/transaction")
+    public String transactions(Model model) {
+    	return "transaction/transactions";
     }
     
+    
+
+
+    // ================================= Authentification ============================
+    // ===============================================================================    
     @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
+    public String login() { return "login"; }
 }

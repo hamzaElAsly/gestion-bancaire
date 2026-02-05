@@ -27,29 +27,23 @@ public class ClientService {
     }
     
     public Client save(Client client) { return clientRepository.save(client); }
+    
     public Client getById(Long id) {
         return clientRepository.findById(id).orElseThrow(() -> new RuntimeException("Client introuvable"));
     }
     
-    public long getClientsActifs() {
-        return clientRepository.countByStatut(Client.StatutClient.ACTIF);
-    }
+    public long getClientsActifs() { return clientRepository.countByStatut(Client.StatutClient.ACTIF); }
     
     public Page<ClientViewDTO> getClientsWithStatus(String keyword, Client.StatutClient statut, Pageable pageable) 
     {
     	String kw = (keyword == null) ? "" : keyword.trim();
         Page<Client> pageClients;
 
-        if (kw.isBlank()) {
-        	pageClients = clientRepository.searchByStatutAndKeyword(statut, "", pageable);
-        } 
-        else {
-        	pageClients = clientRepository.searchByStatutAndKeyword(statut, keyword, pageable);
-        }
+        if (kw.isBlank()) { pageClients = clientRepository.searchByStatutAndKeyword(statut, "", pageable); } 
+        else { pageClients = clientRepository.searchByStatutAndKeyword(statut, keyword, pageable); }
 
         return pageClients.map(client -> {
             int nbComptes = (client.getComptes() == null) ? 0 : client.getComptes().size();
-            //String statutClient = nbComptes > 0 ? "ACTIF" : "INACTIF";
             String statutClient = (client.getStatut()== null) ? null : client.getStatut().name();
 
             return new ClientViewDTO(
@@ -72,14 +66,15 @@ public class ClientService {
                             t.getType(),
                             t.getMontant(),
                             t.getDate()
-                    ))
-                    .toList();
+                    )).toList();
+            
             return new CompteDetailsDTO(
                     compte.getId(),
                     compte.getType(),
                     compte.getSolde(),
                     transactionsDTO
             );}).toList();
+        
         return new ClientDetailsDTO(
                 client.getNom(),
                 client.getPrenom(),
