@@ -1,10 +1,806 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+	<title>Liste des clients</title>
+    <style>
+        :root {
+            --primary-purple: #5B4CF5;
+            --purple-dark: #4A3CD6;
+            --purple-light: #F5F3FF;
+            --text-dark: #1F2937;
+            --text-gray: #6B7280;
+            --bg-light: #F9FAFB;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary-purple) 0%, var(--purple-dark) 100%);
+            min-height: 100vh;
+            width: 250px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 30px 20px;
+            color: white;
+        }
+
+        .sidebar .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar .menu-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-bottom: 20px;
+            margin-top: 30px;
+            letter-spacing: 1px;
+        }
+
+        .sidebar .nav-item {
+            margin-bottom: 10px;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .sidebar .nav-link i {
+            font-size: 20px;
+            width: 24px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 250px;
+            padding: 30px 40px;
+        }
+
+        /* HEADER */
+        .page-header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-purple);
+            text-decoration: none;
+        }
+
+        /* STATS CARDS */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(91, 76, 245, 0.15);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .stat-info h3 {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .stat-info p {
+            font-size: 14px;
+            color: var(--text-gray);
+            margin: 0;
+        }
+
+        /* TABLE CARD */
+        .table-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .table-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 15px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            border: 1px solid #E5E7EB;
+            background: var(--bg-light);
+            padding: 10px 15px 10px 40px;
+            border-radius: 10px;
+            width: 250px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary-purple);
+            background: white;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-gray);
+        }
+
+        .btn-primary {
+            background: var(--primary-purple);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: var(--purple-dark);
+            transform: translateY(-2px);
+        }
+
+        /* TABLE */
+        .custom-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .custom-table thead th {
+            background: var(--bg-light);
+            color: var(--text-gray);
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            padding: 15px 20px;
+            border: none;
+            letter-spacing: 0.5px;
+        }
+
+        .custom-table thead th:first-child {
+            border-radius: 10px 0 0 10px;
+        }
+
+        .custom-table thead th:last-child {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .custom-table tbody tr {
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s;
+        }
+
+        .custom-table tbody tr:hover {
+            transform: scale(1.01);
+            box-shadow: 0 5px 15px rgba(91, 76, 245, 0.1);
+        }
+
+        .custom-table tbody td {
+            padding: 20px;
+            border: none;
+            vertical-align: middle;
+        }
+
+        .custom-table tbody td:first-child {
+            border-radius: 10px 0 0 10px;
+        }
+
+        .custom-table tbody td:last-child {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .client-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .client-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .client-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 3px;
+        }
+
+        .client-email {
+            font-size: 13px;
+            color: var(--text-gray);
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #D1FAE5;
+            color: #10B981;
+        }
+
+        .badge-warning {
+            background: #FEF3C7;
+            color: #F59E0B;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-edit {
+            background: var(--purple-light);
+            color: var(--primary-purple);
+        }
+
+        .btn-edit:hover {
+            background: var(--primary-purple);
+            color: white;
+        }
+
+        .btn-delete {
+            background: #FEE2E2;
+            color: #EF4444;
+        }
+
+        .btn-delete:hover {
+            background: #EF4444;
+            color: white;
+        }
+
+        .btn-view {
+            background: #DBEAFE;
+            color: #3B82F6;
+        }
+
+        .btn-view:hover {
+            background: #3B82F6;
+            color: white;
+        }
+
+        /* MODAL */
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--purple-dark) 100%);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            padding: 25px 30px;
+        }
+
+        .modal-title {
+            font-weight: 600;
+        }
+
+        .btn-close {
+            filter: brightness(0) invert(1);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid #E5E7EB;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px rgba(91, 76, 245, 0.1);
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        .btn-secondary {
+            background: #E5E7EB;
+            color: var(--text-dark);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* PAGINATION */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        .pagination-info {
+            color: var(--text-gray);
+            font-size: 14px;
+        }
+
+        .pagination {
+            margin: 0;
+        }
+
+        .page-link {
+            border: 1px solid #E5E7EB;
+            color: var(--text-dark);
+            padding: 8px 15px;
+            margin: 0 3px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .page-link:hover {
+            background: var(--purple-light);
+            color: var(--primary-purple);
+            border-color: var(--primary-purple);
+        }
+
+        .page-item.active .page-link {
+            background: var(--primary-purple);
+            border-color: var(--primary-purple);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
 </head>
 <body>
 
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">
+            <i class="bi bi-play-fill"></i>
+            Gestion Bancaire
+        </div>
+        <div class="menu-title">Menu</div>
+        <nav>
+            <div class="nav-item">
+                <a th:href="@{/}" class="nav-link ">
+                    <i class="bi bi-house-door"></i>
+                    <span>Home</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a th:href="@{/clients}" class="nav-link">
+                    <i class="bi bi-people"></i>
+                    <span>Client</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="bi bi-bank"></i>
+                    <span>Compte</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a th:href="@{/transaction}" class="nav-link active">
+                    <i class="bi bi-credit-card"></i>
+                    <span>Transaction</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="bi bi-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <h1 class="page-title">Gestion des Transactions</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Transaction</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- STATS CARDS -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>989899</h3>
+                    <p>Total Clients</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #06beb6 0%, #48b1bf 100%);">
+                    <i class="bi bi-person-check"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>1212</h3>
+                    <p>Clients Actifs</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <i class="bi bi-person-plus"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>2323232</h3>
+                    <p>Nouveaux (Mois)</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #5ee7df 0%, #b490ca 100%);">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>2.5M</h3>
+                    <p>Solde Total</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CLIENTS TABLE -->
+        <div class="table-card">
+            <div class="table-header">
+                <h2 class="table-title">Liste des Clients</h2>
+	                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createClientModal" onclick="openAddModal()">
+	                    <i class="bi bi-plus-circle me-2"></i>Nouveau Client
+	                </button>
+            </div>
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Email</th>
+                        <th>Comptes</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+<!--                 <tbody id="clientsTableBody"> -->
+<!--                     <tr th:each="c:${clients}"> -->
+<!-- 					    <td> -->
+<!-- 					        <div class="client-info"> -->
+<!-- 					            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJ_I2fxYhYCW7_9bIwitAjsh3JZJ0DiB7p3g&s" -->
+<!-- 					                 alt="Client" -->
+<!-- 					                 class="client-avatar"> -->
+<!-- 					            <div> -->
+<!-- 					                <div class="client-name" -->
+<!-- 					                     th:text="${c.nomComplet}"> -->
+<!-- 					                </div> -->
+<!-- 					                <div class="client-email">CL001</div> -->
+<!-- 					            </div> -->
+<!-- 					        </div> -->
+<!-- 					    </td> -->
+<!-- 					    <td th:text="${c.email}"></td><td> -->
+<!-- 					        <span class="badge bg-secondary" th:text="${c.nbComptes}"></span> -->
+<!-- 					    </td> -->
+<!-- 					    <td><span th:text="${c.statut}" -->
+<!-- 					              th:class="${c.statut == 'ACTIF'} ? 'badge bg-success' : 'badge bg-danger'"> -->
+<!-- 					        </span> -->
+<!-- 					    </td> -->
+<!-- 						<td> -->
+<!-- 					        <div class="action-buttons"> -->
+<!-- 					            <button class="btn-action btn-view" title="Voir détails" th:onclick="'openClientDetails(' + ${c.id} + ')'"> -->
+<!-- 					                <i class="bi bi-eye"></i> -->
+<!-- 					            </button> -->
+<!-- 					            <button class="btn-action btn-edit" th:onclick="'openEditClient(' + ${c.id} + ')'"  -->
+<!-- 					            		title="Modifier" data-bs-toggle="modal" data-bs-target="#editClientModal">  -->
+<!-- 					            		<i class="bi bi-pencil"></i> -->
+<!-- 					            </button> -->
+<!-- 					            <button class="btn-action btn-delete" -->
+<!-- 					                    title="Supprimer"> -->
+<!-- 					                <i class="bi bi-trash"></i> -->
+<!-- 					            </button> -->
+<!-- 					        </div> -->
+<!-- 					    </td> -->
+<!-- 					</tr> -->
+<!--                 </tbody> -->
+            </table>
+
+	<!-- MODAL DÉTAILS CLIENT -->
+	<div class="modal fade" id="detailsClientModal" tabindex="-1">
+	  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+	    <div class="modal-content">
+	
+	      <!-- HEADER -->
+	      <div class="modal-header bg-primary text-white">
+	        <h5 class="modal-title">
+	          <i class="bi bi-person-lines-fill me-2"></i>
+	          Détails Client
+	        </h5>
+	        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+	      </div>
+	
+	      <!-- BODY -->
+	      <div class="modal-body">
+	
+	        <!-- INFOS CLIENT -->
+	        <div class="row mb-4">
+	          <div class="col-md-6">
+	            <strong>Nom :</strong>
+	            <span id="dc-nom"></span>
+	          </div>
+	          <div class="col-md-6">
+	            <strong>Prénom :</strong>
+	            <span id="dc-prenom"></span>
+	          </div>
+	
+	          <div class="col-md-6 mt-2">
+	            <strong>Email :</strong>
+	            <span id="dc-email"></span>
+	          </div>
+	          <div class="col-md-6 mt-2">
+	            <strong>Ville :</strong>
+	            <span id="dc-ville"></span>
+	          </div>
+	
+	          <div class="col-12 mt-2">
+	            <strong>Adresse :</strong>
+	            <span id="dc-adresse"></span>
+	          </div>
+	
+	          <div class="col-12 mt-3">
+	            <span id="dc-statut" class="badge"></span>
+	          </div>
+	        </div>
+	
+	        <hr>
+	
+	        <!-- COMPTES -->
+	        <h5 class="mb-3">
+	          <i class="bi bi-credit-card me-2"></i> Comptes
+	        </h5>
+	
+	        <div id="dc-comptes"></div>
+	
+	      </div>
+	
+	      <!-- FOOTER -->
+	      <div class="modal-footer">
+	        <button class="btn btn-secondary" data-bs-dismiss="modal">
+	          Fermer
+	        </button>
+	      </div>
+	
+	    </div>
+	  </div>
+	</div>
+
+	<!-- MODAL EDIT CLIENT -->
+	<div class="modal fade" id="editClientModal" tabindex="-1">
+	  <div class="modal-dialog modal-lg modal-dialog-centered">
+	    <div class="modal-content">
+	
+	      <div class="modal-header bg-warning">
+	        <h5 class="modal-title">
+	          <i class="bi bi-pencil me-2"></i> Modifier Client
+	        </h5>
+	        <button class="btn-close" data-bs-dismiss="modal"></button>
+	      </div>
+
+	      <div class="modal-body">
+	        <input type="hidden" id="edit-id">
+	
+	        <div class="row g-3">
+	          <div class="col-md-6">
+	            <label>Nom</label>
+	            <input id="edit-nom" class="form-control">
+	          </div>
+	          <div class="col-md-6">
+	            <label>Prénom</label>
+	            <input id="edit-prenom" class="form-control">
+	          </div>
+	          <div class="col-md-6">
+	            <label>Email</label>
+	            <input id="edit-email" class="form-control">
+	          </div>
+	          <div class="col-md-6">
+	            <label>Ville</label>
+	            <input id="edit-ville" class="form-control">
+	          </div>
+	          <div class="col-12">
+	            <label>Adresse</label>
+	            <textarea id="edit-adresse" class="form-control"></textarea>
+	          </div>
+	        </div>
+	      </div>
+	
+	      <div class="modal-footer">
+	        <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+	        <button class="btn btn-warning" onclick="saveEditClient()">
+	          Enregistrer
+	        </button>
+	      </div>
+	
+	    </div>
+	  </div>
+	</div>
+
+    <!-- MODAL ADD/EDIT CLIENT -->
+    <div class="modal fade" id="createClientModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">
+                        <i class="bi bi-person-plus me-2"></i>
+                        <span id="modalTitleText">Ajouter un Client</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="clientForm">
+                        <input type="hidden" id="clientId">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="nom" class="form-label">Nom *</label>
+                                <input type="text" class="form-control" id="nom" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="prenom" class="form-label">Prénom *</label>
+                                <input type="text" class="form-control" id="prenom" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="telephone" class="form-label">Téléphone *</label>
+                                <input type="tel" class="form-control" id="telephone" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="adresse" class="form-label">Adresse *</label>
+                                <textarea class="form-control" id="adresse" rows="3" required></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" onclick="saveClient()">
+                        <i class="bi bi-check-circle me-2"></i>Enregistrer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
 </body>
+
 </html>
