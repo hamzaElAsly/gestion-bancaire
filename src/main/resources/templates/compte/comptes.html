@@ -1,44 +1,51 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr">
 <head>
-<meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Comptes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-	<title>Liste des clients</title>
-    <link rel="stylesheet" href="all.css">
+    <link rel="stylesheet" th:href="@{/all.css}">
 </head>
 <body>
-
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="logo">
             <i class="bi bi-play-fill"></i>
-            Gestion Bancaire
+            Dashboard
         </div>
+
         <div class="menu-title">Menu</div>
         <nav>
             <div class="nav-item">
-                <a th:href="@{/}" class="nav-link ">
+                <a href="#" class="nav-link">
                     <i class="bi bi-house-door"></i>
                     <span>Home</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a th:href="@{/clients}" class="nav-link">
-                    <i class="bi bi-people"></i>
-                    <span>Client</span>
+                <a href="#" class="nav-link active">
+                    <i class="bi bi-grid"></i>
+                    <span>Comptes</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="/compte" class="nav-link active">
-                    <i class="bi bi-bank"></i>
-                    <span>Compte</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a th:href="@{/transaction}" class="nav-link">
+                <a href="#" class="nav-link">
                     <i class="bi bi-credit-card"></i>
-                    <span>Transaction</span>
+                    <span>Cards</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="bi bi-people"></i>
+                    <span>Clients</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Transactions</span>
                 </a>
             </div>
             <div class="nav-item">
@@ -50,7 +57,7 @@
         </nav>
     </div>
 
-	<!-- MAIN CONTENT -->
+    <!-- MAIN CONTENT -->
     <div class="main-content">
         <!-- PAGE HEADER -->
         <div class="page-header">
@@ -160,142 +167,6 @@
                                     <i class="bi bi-pencil"></i>
                                 </button>
                                 <button class="btn-action btn-delete" onclick="deleteCompte(1)" title="Supprimer">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="compte-info">
-                                <div class="compte-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
-                                    <i class="bi bi-piggy-bank"></i>
-                                </div>
-                                <div>
-                                    <div class="compte-number">CPT1704708001002</div>
-                                    <div class="compte-type">Compte Épargne</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>Mohammed Alami</td>
-                        <td><span class="badge badge-primary">EPARGNE</span></td>
-                        <td><span class="solde-amount">50,000.00 DH</span></td>
-                        <td>01/01/2024</td>
-                        <td><span class="badge badge-success">Actif</span></td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-action btn-transaction" title="Transactions">
-                                    <i class="bi bi-arrow-left-right"></i>
-                                </button>
-                                <button class="btn-action btn-view" title="Voir détails">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                                <button class="btn-action btn-edit" data-bs-toggle="modal" data-bs-target="#compteModal" onclick="openEditModal(2)" title="Modifier">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn-action btn-delete" onclick="deleteCompte(2)" title="Supprimer">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="compte-info">
-                                <div class="compte-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                                    <i class="bi bi-wallet2"></i>
-                                </div>
-                                <div>
-                                    <div class="compte-number">CPT1704708002001</div>
-                                    <div class="compte-type">Compte Courant</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>Fatima Benkirane</td>
-                        <td><span class="badge badge-info">COURANT</span></td>
-                        <td><span class="solde-amount">8,500.00 DH</span></td>
-                        <td>02/01/2024</td>
-                        <td><span class="badge badge-success">Actif</span></td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-action btn-transaction" title="Transactions">
-                                    <i class="bi bi-arrow-left-right"></i>
-                                </button>
-                                <button class="btn-action btn-view" title="Voir détails">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                                <button class="btn-action btn-edit" data-bs-toggle="modal" data-bs-target="#compteModal" onclick="openEditModal(3)" title="Modifier">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn-action btn-delete" onclick="deleteCompte(3)" title="Supprimer">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="compte-info">
-                                <div class="compte-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
-                                    <i class="bi bi-piggy-bank"></i>
-                                </div>
-                                <div>
-                                    <div class="compte-number">CPT1704708002002</div>
-                                    <div class="compte-type">Compte Épargne</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>Fatima Benkirane</td>
-                        <td><span class="badge badge-primary">EPARGNE</span></td>
-                        <td><span class="solde-amount">25,000.00 DH</span></td>
-                        <td>02/01/2024</td>
-                        <td><span class="badge badge-success">Actif</span></td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-action btn-transaction" title="Transactions">
-                                    <i class="bi bi-arrow-left-right"></i>
-                                </button>
-                                <button class="btn-action btn-view" title="Voir détails">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                                <button class="btn-action btn-edit" data-bs-toggle="modal" data-bs-target="#compteModal" onclick="openEditModal(4)" title="Modifier">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn-action btn-delete" onclick="deleteCompte(4)" title="Supprimer">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="compte-info">
-                                <div class="compte-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                                    <i class="bi bi-wallet2"></i>
-                                </div>
-                                <div>
-                                    <div class="compte-number">CPT1704708003001</div>
-                                    <div class="compte-type">Compte Courant</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>Ahmed Cherkaoui</td>
-                        <td><span class="badge badge-info">COURANT</span></td>
-                        <td><span class="solde-amount">12,000.00 DH</span></td>
-                        <td>03/01/2024</td>
-                        <td><span class="badge badge-warning">Inactif</span></td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-action btn-transaction" title="Transactions">
-                                    <i class="bi bi-arrow-left-right"></i>
-                                </button>
-                                <button class="btn-action btn-view" title="Voir détails">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                                <button class="btn-action btn-edit" data-bs-toggle="modal" data-bs-target="#compteModal" onclick="openEditModal(5)" title="Modifier">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn-action btn-delete" onclick="deleteCompte(5)" title="Supprimer">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </div>

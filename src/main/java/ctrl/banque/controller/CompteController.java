@@ -1,6 +1,7 @@
 package ctrl.banque.controller;
 
 import java.text.DecimalFormat;
+//import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,13 +15,13 @@ import org.springframework.web.bind.annotation.*;
 import ctrl.banque.dto.ClientDetailsDTO;
 import ctrl.banque.dto.ClientEditDTO;
 import ctrl.banque.dto.ClientViewDTO;
-import ctrl.banque.entity.Client;
+import ctrl.banque.entity.*;
 import ctrl.banque.repository.*;
 import ctrl.banque.service.ClientService;
+import ctrl.banque.service.CompteService;
 
 @Controller
 public class CompteController {
-    // PAGE D'ACCUEIL
 	@Autowired
     private CompteRepository compteRepository;
     private TransactionRepository transactionRepository1;
@@ -142,8 +143,17 @@ public class CompteController {
     	return "transaction/transactions";
     }
     
-    
 
+    // ================================= Compte =================================
+    // ==========================================================================
+    @Autowired
+    private CompteService compteService;
+    @GetMapping("/comptes")
+    public String listeComptes(Model model) {
+        model.addAttribute("comptes", compteService.getAllComptes());
+        return "compte/comptes";
+    }
+    
 
     // ================================= Authentification ============================
     // ===============================================================================    
